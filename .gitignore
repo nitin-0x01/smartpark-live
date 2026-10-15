@@ -1,0 +1,7 @@
+node_modules/
+dist/
+java-build/
+*.class
+*.jar
+.env
+.env.localc
