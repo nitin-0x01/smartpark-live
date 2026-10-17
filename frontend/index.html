@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1220">
+  <title>Parkwise | Operations Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="toast-region" class="toast-region" aria-live="polite"></div>
+  <section id="login-view" class="login-view">
+    <div class="login-card">
+      <div class="logo-mark">P</div>
+      <p class="overline">PARKWISE OPERATIONS</p>
+      <h1>Welcome back</h1>
+      <p class="muted">Sign in to manage capacity, vehicles, payments, and EV charging.</p>
+      <form id="login-form">
+        <label>Username<input name="username" autocomplete="username" required></label>
+        <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+        <button class="primary full" type="submit">Sign in <span>→</span></button>
+      </form>
+      <p class="login-hint">Default accounts: <strong>admin</strong> / admin123 or <strong>guard</strong> / guard123</p>
+    </div>
+  </section>
+
+  <div id="app-view" class="app-shell hidden">
+    <aside class="sidebar">
+      <a class="brand" href="#"><span class="logo-mark small">P</span><span>Parkwise</span></a>
+      <nav>
+        <a class="active" href="#overview">▦ <span>Overview</span></a>
+        <a href="#parking">⌗ <span>Parking grid</span></a>
+        <a href="#operations">↕ <span>Operations</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <button id="theme-toggle" class="ghost full">☾ <span>Dark mode</span></button>
+        <button id="logout-button" class="ghost full">↪ <span>Sign out</span></button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="top-header">
+        <div><p class="overline">OPERATIONS CONSOLE</p><h2>Parking overview</h2></div>
+        <div class="header-actions"><span id="last-updated" class="muted">Syncing...</span><span class="status-dot">● Live</span></div>
+      </header>
+
+      <section id="overview" class="metric-grid">
+        <article class="metric-card blue"><span class="metric-icon">⌗</span><div><p>Total slots</p><strong id="total-slots">—</strong><small id="slot-utilization">Loading capacity</small></div></article>
+        <article class="metric-card red"><span class="metric-icon">◉</span><div><p>Occupied now</p><strong id="occupied-slots">—</strong><small id="vacant-slots">Loading availability</small></div></article>
+        <article class="metric-card green"><span class="metric-icon">↗</span><div><p>Today's revenue</p><strong id="daily-revenue">—</strong><small>Parking and EV charging</small></div></article>
+        <article class="metric-card amber"><span class="metric-icon">⚡</span><div><p>EV stations</p><strong id="ev-status">Online</strong><small>Live station monitoring</small></div></article>
+      </section>
+
+      <section id="operations" class="content-grid">
+        <article class="panel form-panel">
+          <div class="panel-heading"><div><p class="overline">VEHICLE ENTRY</p><h3>Park a vehicle</h3></div><span class="panel-icon">↘</span></div>
+          <form id="park-form">
+            <label>Vehicle type<select name="type"><option value="1">Car</option><option value="2">Bike</option><option value="3">EV Car</option></select></label>
+            <label>Registration number<input name="reg" pattern="[A-Za-z0-9 -]{4,15}" placeholder="e.g. MH12AB1234" required></label>
+            <div class="two-col"><label>Owner name<input name="owner" maxlength="50" required></label><label>Phone<input name="phone" pattern="[0-9+ -]{0,15}" placeholder="Optional"></label></div>
+            <div class="allocation"><span>Automatic allocation</span><strong id="allocation-status">Select a vehicle type</strong></div>
+            <button class="primary" type="submit">Park vehicle <span>→</span></button>
+          </form>
+        </article>
+        <article class="panel form-panel">
+          <div class="panel-heading"><div><p class="overline">VEHICLE EXIT</p><h3>Checkout and billing</h3></div><span class="panel-icon">↗</span></div>
+          <form id="checkout-form">
+            <label>Registration number<input name="reg" pattern="[A-Za-z0-9 -]{4,15}" placeholder="Enter plate number" required></label>
+            <button class="secondary" type="submit">Preview bill <span>→</span></button>
+          </form>
+          <div class="quick-note">Preview duration, parking rate, EV fees, and total before payment.</div>
+        </article>
+      </section>
+
+      <section id="parking" class="panel parking-panel">
+        <div class="panel-heading"><div><p class="overline">LIVE CAPACITY</p><h3>Interactive parking lot</h3><p class="muted">Updates automatically every 10 seconds.</p></div><div class="legend"><span><i class="free"></i>Available</span><span><i class="occupied"></i>Occupied</span><span><i class="reserved"></i>Reserved</span><span><i class="charging"></i>Charging</span></div></div>
+        <div id="parking-grid" class="parking-grid"><div class="loading">Loading parking slots...</div></div>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="panel-heading"><div><p class="overline">ACTIVE INVENTORY</p><h3>Parked vehicles</h3></div><button id="refresh-button" class="secondary">↻ Refresh</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Ticket</th><th>Registration</th><th>Owner</th><th>Type</th><th>Slot</th><th>Entry time</th></tr></thead><tbody id="vehicles-body"><tr><td colspan="6" class="loading">Loading vehicles...</td></tr></tbody></table></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="bill-dialog">
+    <div class="dialog-heading"><div><p class="overline">CHECKOUT</p><h3>Review payment</h3></div><button class="close-button" id="close-dialog">×</button></div>
+    <div id="bill-content"></div>
+    <form id="exit-form" class="exit-form">
+      <input type="hidden" name="reg" id="exit-reg"><input type="hidden" name="am" id="exit-amount">
+      <label>Payment method<select name="mode" id="payment-mode"><option>Cash</option><option>Card</option><option>UPI</option></select></label>
+      <label id="txn-field" class="hidden">UPI transaction ID<input name="txn" pattern="[A-Za-z0-9]{6,30}" maxlength="30"></label>
+      <div class="dialog-actions"><button type="button" class="secondary" id="cancel-dialog">Cancel</button><button class="primary" type="submit">Complete checkout</button></div>
+    </form>
+  </dialog>
+  <script src="/app.js"></script>
+</body>
+</html>

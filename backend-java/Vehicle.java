@@ -1,3 +1,4 @@
+// Abstract class: Car aur Bike isse inherit karte hain (OOP: abstraction + inheritance)
 public abstract class Vehicle {
     protected String regNo;
     protected String ownerName;
@@ -13,6 +14,6 @@ public abstract class Vehicle {
     public String getOwnerName() { return ownerName; }
     public String getPhone() { return phone; }
 
-    public abstract int getTypeId();
+    public abstract int getTypeId();       // vehicle_type table ka id
     public abstract String getTypeName();
 }

@@ -1,7 +1,23 @@
+
+# Node.js dependencies
 node_modules/
-dist/
-java-build/
+server-node/node_modules/
+
+# Java compiled files
 *.class
-*.jar
+
+# Environment secrets
 .env
-.env.localc
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
